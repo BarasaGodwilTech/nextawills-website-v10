@@ -23,6 +23,76 @@ business automation, IT support, and domains — built as static HTML/CSS/JS
    live, turn `.brand-card` back into an `<a>` in `index.html` pointing at
    the real domain.
 
+## v10 pass — portfolio, SEO clean-up, visual content
+
+- **New page: `pages/portfolio.html`** (nav + footer + sitemap). It shows the two products you build and run
+  (Will's Tech Store, NextaStore) as project cards, the client logos, and four illustrated "starting point" tiles.
+  The homepage "Our own brands" block now uses the same project cards with a "See all our work" link.
+  The covers are stylised device illustrations (made in code), **not real screenshots** — to use a real one,
+  put an `<img>` inside `.work-card__media` in place of the `<svg class="work-art">`.
+  To add a project, copy one `<article class="work-card">` (see `work_card` markup in `portfolio.html`).
+- **SEO**: every page has a unique, keyword-first title (<= 60 chars) and a unique description (120-160 chars);
+  Open Graph / Twitter tags are rebuilt on every page with a proper 1200x630 share image
+  (`assets/og/og-default.jpg`) instead of the old video poster; JSON-LD added (organisation + website on the
+  homepage, breadcrumbs on every inner page, FAQ markup on the FAQ page); canonical URLs everywhere; the 404 is
+  `noindex`; the sitemap gained the portfolio and `lastmod` dates. Phone number is deliberately NOT in the
+  structured data while it is still a placeholder.
+- **Visual content**: an illustration at the top of every inner-page hero card (animated, light/dark aware),
+  a layered-stack diagram on the homepage (replaces the 01-04 strip; hover a row to light up its layer),
+  project covers, and a looping video reel on the portfolio page (`assets/video/reel.mp4`, silent, plays only
+  while visible, has a pause button, and shows the poster for visitors who prefer reduced motion).
+- Housekeeping: the old `hero-core.mp4` was replaced by the silent `reel.mp4`; six nav links now fit down to
+  801px (the nav button hides between 801-960px).
+
+## v9 pass — site-wide layout polish (CSS only, see the "v9" block in `css/styles.css`)
+
+- **One left/right edge**: nav, hero, section headings, cards and footer now line up (the nav
+  and hero used to sit ~40px off the rest of the page on desktop).
+- **Headings** no longer wrap into 3–4 short lines; the clients heading is truly centred.
+- **Services grid** is 3 + 4 cards instead of 6 + one orphan; the "01–04" strip is now a quiet
+  pillar band (numbers are small amber markers, the labels are the headline).
+- **FAQ** is two columns on desktop (heading left, questions right) on the homepage, FAQ page
+  and contact page. **Timelines** (About, Process) run across the page on desktop.
+- **Rhythm**: sections alternate between page and raised backgrounds (interior pages and the
+  homepage process / FAQ blocks), and light-theme cards get a soft shadow for depth.
+- Fixed the CTA-band headline line height and a hard-edged glow behind the homepage FAQ.
+
+## v8 pass — new mobile menu, nav polish, interior page heroes
+
+- **Mobile menu rebuilt** (`initNavToggle` in `js/main.js`, "v8" block in `css/styles.css`):
+  the hamburger is now a 44px button that animates into an X; the menu is a floating panel
+  with large tap targets, the current page highlighted, a **Get started** button, WhatsApp /
+  email shortcuts and the support-hours line. It dims the page behind it, locks background
+  scroll, and closes on Esc, outside tap, link tap, or when the window grows to desktop.
+  The menu footer is built in JS from each page's existing nav/footer links, so **no HTML
+  needed editing** (and the WhatsApp number only has to be changed in the places listed above).
+- **Desktop nav**: pill hover/active states, a solid "Get started" button, and a soft shadow
+  once the page scrolls.
+- **Interior page heroes** (all 10 pages, CSS only): breadcrumb and page label restyled so they
+  no longer compete, smaller balanced headline, faint grid texture, and the highlight panel is
+  now a card with an accent top edge, check-mark rows and (on FAQ / Pricing) arrow links.
+  On phones the buttons go full-width and the heroes are noticeably shorter.
+- **Small touches**: in-page jump links no longer hide under the sticky nav, balanced headline
+  line breaks, 46px minimum button height, and the CTA bands pick up the orbit motif.
+
+## v7 pass — mobile hero fix, readable text, two-row footer, theme contrast
+
+- **Mobile hero was wider than the screen.** The hero grid used `1fr` and the brand
+  marquee inside it is `width:max-content`, so the column stretched to ~580px and the
+  headline, lede and status card were clipped on the right. Fixed with
+  `minmax(0,1fr)` + `min-width:0` (see section 1 at the bottom of `css/styles.css`).
+- **Type floor.** Labels, tags, eyebrows, footer and form text were 9–11px. Nothing
+  readable is now under 11.5px (labels 12px+) and running text is 14px+. Form inputs
+  are 16px on phones so iOS doesn't zoom on focus.
+- **Footer on phones/tablets** now lays the link columns out in two rows: Services |
+  Company, then Start here as tappable chips. Extra bottom padding keeps the floating
+  WhatsApp / back-to-top buttons off the copyright line. Desktop is unchanged.
+- **Theme contrast.** Every page was checked against WCAG AA in both themes; fixed the
+  invisible "See pricing first" link on the CTA band, the console label/typing line,
+  and CTA-band paragraph text. `--ink-dim` / `--ink-faint` were darkened (light) and
+  lightened (dark) for the same reason.
+- Lone third client logo is centred on the 2-column mobile grid.
+
 ## Latest pass — hero rewrite, Font Awesome, brands & clients, Mbale
 
 - **Font Awesome 6** (via cdnjs) is now loaded on every page and used for

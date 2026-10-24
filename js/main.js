@@ -10,6 +10,8 @@
     initTheme();
     initNavToggle();
     initNavActiveLink();
+    initNavScrolled();
+    initReel();
     initNavStatus();
     initScrollProgress();
     initScrollReveal();
@@ -55,24 +57,132 @@
     }
   }
 
-  /* ---------- Mobile nav toggle ---------- */
+  /* ---------- Mobile menu ----------
+     Animated hamburger -> X, a floating menu panel with a Get-started button and
+     quick contact links (built here from the page's own nav/footer links, so no
+     page needs editing), a dimmed backdrop, scroll lock, and Esc / outside-tap /
+     link-tap / resize-to-desktop to close. */
   function initNavToggle() {
     const toggle = document.getElementById('navToggle');
     const links = document.querySelector('.nav__links');
     if (!toggle || !links) return;
-    toggle.addEventListener('click', () => {
-      const open = links.classList.toggle('nav__links--open');
+
+    links.id = links.id || 'primaryMenu';
+    toggle.setAttribute('aria-controls', links.id);
+    toggle.setAttribute('aria-label', 'Open menu');
+    toggle.setAttribute('aria-expanded', 'false');
+
+    /* Menu footer: primary action + contact shortcuts, reusing hrefs already on the page */
+    const cta = document.querySelector('.nav__cta');
+    const wa = document.querySelector('.footer__contact a[href*="wa.me"]');
+    const mail = document.querySelector('.footer__contact a[href^="mailto:"]');
+    const foot = document.createElement('div');
+    foot.className = 'nav__menu-foot';
+    if (cta) {
+      const a = document.createElement('a');
+      a.className = 'nav__menu-cta';
+      a.setAttribute('href', cta.getAttribute('href'));
+      a.innerHTML = '<span>Get started</span><i class="fa-solid fa-arrow-right" aria-hidden="true"></i>';
+      foot.appendChild(a);
+    }
+    if (wa || mail) {
+      const row = document.createElement('div');
+      row.className = 'nav__menu-contact';
+      if (wa) {
+        const a = document.createElement('a');
+        a.setAttribute('href', wa.getAttribute('href'));
+        a.setAttribute('target', '_blank');
+        a.setAttribute('rel', 'noopener');
+        a.innerHTML = '<i class="fa-brands fa-whatsapp" aria-hidden="true"></i><span>WhatsApp</span>';
+        row.appendChild(a);
+      }
+      if (mail) {
+        const a = document.createElement('a');
+        a.setAttribute('href', mail.getAttribute('href'));
+        a.innerHTML = '<i class="fa-solid fa-envelope" aria-hidden="true"></i><span>Email us</span>';
+        row.appendChild(a);
+      }
+      foot.appendChild(row);
+    }
+    const statusEl = document.querySelector('.footer__status');
+    if (statusEl) {
+      const p = document.createElement('p');
+      p.className = 'nav__menu-note';
+      p.textContent = statusEl.textContent.trim() + ' · Mbale, Uganda';
+      foot.appendChild(p);
+    }
+    links.appendChild(foot);
+
+    /* Stagger index for the open animation */
+    [...links.children].forEach((el, i) => el.style.setProperty('--i', i));
+
+    const backdrop = document.createElement('div');
+    backdrop.className = 'nav__backdrop';
+    backdrop.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(backdrop);
+
+    const mq = window.matchMedia('(max-width: 800px)');
+    const setOpen = (open, focusFirst) => {
+      links.classList.toggle('nav__links--open', open);
       toggle.setAttribute('aria-expanded', String(open));
+      toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+      document.body.classList.toggle('menu-open', open);
+      if (open && focusFirst) {
+        const first = links.querySelector('a');
+        if (first) first.focus({ preventScroll: true });
+      }
+    };
+    const isOpen = () => links.classList.contains('nav__links--open');
+
+    toggle.addEventListener('click', (e) => setOpen(!isOpen(), e.detail === 0)); // detail 0 = keyboard
+    backdrop.addEventListener('click', () => setOpen(false));
+    links.addEventListener('click', (e) => { if (e.target.closest('a')) setOpen(false); });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && isOpen()) { setOpen(false); toggle.focus(); }
     });
-    links.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
-      links.classList.remove('nav__links--open');
-      toggle.setAttribute('aria-expanded', 'false');
-    }));
+    const onViewport = () => { if (!mq.matches && isOpen()) setOpen(false); };
+    if (mq.addEventListener) mq.addEventListener('change', onViewport); else mq.addListener(onViewport);
+  }
+
+  /* ---------- Video reel: plays only while visible, respects reduced motion, has a pause button ---------- */
+  function initReel() {
+    const reel = document.querySelector('.reel');
+    if (!reel) return;
+    const video = reel.querySelector('video');
+    const btn = reel.querySelector('.reel__toggle');
+    if (!video) return;
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let userPaused = reduce;
+    const setBtn = () => { if (btn) { btn.setAttribute('aria-pressed', String(video.paused)); btn.setAttribute('aria-label', video.paused ? 'Play video' : 'Pause video'); } };
+    if (btn) btn.addEventListener('click', () => {
+      if (video.paused) { userPaused = false; video.play().catch(() => {}); } else { userPaused = true; video.pause(); }
+      setBtn();
+    });
+    video.addEventListener('play', setBtn);
+    video.addEventListener('pause', setBtn);
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver((entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting && !userPaused) video.play().catch(() => {});
+          else if (!e.isIntersecting) video.pause();
+        });
+      }, { threshold: 0.25 }).observe(reel);
+    } else if (!userPaused) { video.play().catch(() => {}); }
+    setBtn();
+  }
+
+  /* ---------- Nav gets a soft shadow once the page scrolls ---------- */
+  function initNavScrolled() {
+    const nav = document.getElementById('nav');
+    if (!nav) return;
+    const update = () => nav.classList.toggle('is-scrolled', (window.scrollY || document.documentElement.scrollTop) > 8);
+    update();
+    window.addEventListener('scroll', update, { passive: true });
   }
 
   /* ---------- Highlight the current page in the primary nav ---------- */
   function initNavActiveLink() {
-    const links = document.querySelectorAll('.nav__links a');
+    const links = document.querySelectorAll('.nav__links > a');
     if (!links.length) return;
     const current = location.pathname.split('/').pop() || 'index.html';
     links.forEach(a => {

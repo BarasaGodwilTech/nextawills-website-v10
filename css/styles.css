@@ -270,3 +270,463 @@ html[data-theme="dark"] body::after{opacity:.14}
 .footer__inner-status{display:inline-flex;align-items:center;gap:8px}
 .footer__inner p i{color:var(--accent);margin-right:5px;font-size:10px}
 @media (max-width:560px){.footer__inner{flex-direction:column;align-items:flex-start;gap:10px}}
+
+/* =====================================================================
+   v7 — mobile hero fix, readable type floor, two-row footer, theme contrast
+   ===================================================================== */
+
+/* ---------- 1. Hero overflow on mobile ----------
+   Root cause: the hero grid used `1fr` (= minmax(auto,1fr)) and the brand
+   marquee inside it is `width:max-content`. The column grew to fit the whole
+   marquee (~580px), so headline, lede, buttons and the status card were wider
+   than the phone and got clipped on the right. minmax(0,…) + min-width:0 stops it. */
+.hero__copy,.hero__core{min-width:0}
+.hero{overflow-x:clip}
+@media (max-width:1050px){.hero__grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
+@media (max-width:800px){
+  .hero__grid{grid-template-columns:minmax(0,1fr);gap:30px}
+  .hero__sticky{padding:36px 20px 56px}
+  .hero__title{font-size:clamp(2.7rem,12.4vw,4.4rem);max-width:12ch}
+  .hero__lede{font-size:16.5px;margin:18px 0 24px}
+  .hero__actions{gap:8px}
+  .hero__actions .btn--solid{padding:15px 24px}
+  .hero__trust{font-size:13.5px;line-height:1.5;align-items:flex-start;margin-top:22px;padding-top:16px}
+  .hero__trust i{margin-top:4px}
+  .console-panel{max-width:none;margin:0}
+  .hero__brands{max-width:none;margin:16px 0 0}
+}
+
+/* ---------- 2. Readable type floor ----------
+   Nothing the visitor has to read goes below ~12px; running text sits at 14px+. */
+:root{--ink-dim:#4d5a64;--ink-faint:#5f6c75}
+html[data-theme="dark"]{--ink-dim:#b4c1c4;--ink-faint:#8c9da1}
+.eyebrow{font-size:12.5px;letter-spacing:.1em}
+.btn{font-size:14px}
+.nav__links a{font-size:14px}
+.nav__status{font-size:12px}
+.theme-toggle{font-size:12.5px}
+.skip-link{font-size:13.5px}
+.section__intro{font-size:16px}
+.hero__trust{font-size:13px}
+.hero__brands-label{font-size:11.5px}
+.hero__brand-chip span{font-size:13px}
+.hero__brand-chip img{width:28px;height:28px}
+.console-panel__label{font-size:12px}
+.console-status{font-size:13.5px}
+.console-checklist li{font-size:14.5px}
+.console-panel__line{font-size:13px}
+.card__num{font-size:12px}
+.card__tag{font-size:12px;padding:4px 10px;letter-spacing:.06em}
+.card p{font-size:14.5px}
+.card__link{font-size:14px}
+.process__num,.value span,.timeline__year{font-size:12px}
+.process__item p,.feature p,.value p,.timeline__item p{font-size:14.5px}
+.stat__label{font-size:14px}
+.compare__cell{font-size:14px}
+.compare__row:first-child .compare__cell{font-size:11.5px}
+.faq__a p{font-size:15px}
+.section__more a{font-size:14px}
+.contact-channel__label{font-size:11.5px}
+.contact-channel__value{font-size:14px}
+.form__row label{font-size:13px}
+.form__row input,.form__row textarea,.form__row select{font-size:15px}
+.form__status{font-size:13px}
+.breadcrumb{font-size:12px}
+.page-hero p{font-size:16.5px}
+.plan__name{font-size:12px}
+.plan__period{font-size:12px}
+.plan li{font-size:14px}
+.page-hero__panel-label{font-size:11.5px}
+.page-hero__panel-item,.page-hero__panel-list a{font-size:14.5px}
+.page-hero__panel-note{font-size:12.5px}
+.brand-card__body span{font-size:11.5px}
+.brand-card__body p{font-size:14px}
+.client-card p{font-size:13.5px}
+.error-page__log{font-size:12px}
+.footer__tagline{font-size:14px}
+.footer__status{font-size:12px}
+.footer__col h4{font-size:12px;letter-spacing:.09em}
+.footer__col a{font-size:14px}
+.footer__contact a,.footer__contact span{font-size:14px}
+.footer__inner{font-size:12px}
+@media (max-width:800px){
+  .form__row input,.form__row textarea,.form__row select{font-size:16px} /* stops iOS zooming on focus */
+}
+
+/* ---------- 3. Footer: link columns in two rows on tablet/phone ----------
+   Row 1: Services | Company      Row 2: Start here (links as tappable chips).
+   The brand + contact block sits above them, full width. */
+@media (max-width:800px){
+  .footer{padding:48px 20px 112px} /* room so the floating WhatsApp / back-to-top buttons never cover the legal line */
+  .footer__grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:30px 22px;padding-bottom:34px}
+  .footer__grid>div:first-child{grid-column:1/-1}
+  .footer__col a{padding:8px 0}
+  .footer__col:last-child{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:8px;border-top:1px solid var(--line);padding-top:24px}
+  .footer__col:last-child h4{flex:0 0 100%;margin-bottom:4px}
+  .footer__col:last-child a{display:inline-flex;align-items:center;gap:8px;padding:11px 18px;border:1px solid var(--line-strong);border-radius:999px;background:var(--bg-card);color:var(--ink);font-weight:600}
+  .footer__col:last-child a:hover{border-color:var(--accent);color:var(--accent)}
+}
+@media (max-width:560px){
+  .footer{padding-bottom:104px}
+  .footer__grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .footer__inner{gap:8px}
+}
+
+/* ---------- 4. Theme contrast fixes (found by an automated WCAG AA pass over every page, both themes) ---------- */
+.console-panel__label{color:rgba(255,255,255,.64)}
+.console-panel__line{color:rgba(255,255,255,.66)}
+:root{--band-ink-dim:rgba(255,255,255,.88)}
+html[data-theme="dark"]{--band-ink-dim:rgba(255,255,255,.86)}
+.cta-band .btn--text,.cta-band--wide .btn--text{color:var(--band-ink);opacity:.92}
+.cta-band .btn--text:hover,.cta-band--wide .btn--text:hover{color:var(--band-ink);opacity:1;text-decoration:underline;text-underline-offset:4px}
+
+/* ---------- 5. Client logos: centre the lone third card on the 2-column mobile grid ---------- */
+@media (max-width:800px){
+  .clients__grid .client-card:last-child:nth-child(odd){grid-column:1/-1;justify-self:center;width:calc(50% - 6px)}
+}
+
+/* =====================================================================
+   v8 — new mobile menu, nav polish, interior page heroes, small refinements
+   ===================================================================== */
+
+/* ---------- Global refinements ---------- */
+html{scroll-padding-top:84px}                       /* in-page jump links no longer hide under the sticky nav */
+h1,h2,h3{text-wrap:balance}                         /* even, intentional line breaks in headlines */
+p{text-wrap:pretty}
+.btn{min-height:46px}
+.btn:active{transform:scale(.98)}
+
+/* ---------- Navigation (all sizes) ---------- */
+.nav{transition:box-shadow .25s ease}
+.nav.is-scrolled{box-shadow:0 10px 30px rgba(20,32,43,.08)}
+html[data-theme="dark"] .nav.is-scrolled{box-shadow:0 12px 32px rgba(0,0,0,.4)}
+.nav .nav__cta{background:var(--accent);border-color:var(--accent);color:var(--bg);font-weight:800;padding:11px 20px}
+.nav .nav__cta:hover{background:var(--accent-dark);border-color:var(--accent-dark);color:var(--bg);transform:translateY(-1px)}
+
+/* Hamburger button (hidden on desktop) */
+.nav__toggle{width:44px;height:44px;padding:0;border:1px solid var(--line-strong);border-radius:14px;background:var(--bg-raised);
+  display:none;flex-direction:column;align-items:center;justify-content:center;gap:5px;transition:background .25s ease,border-color .25s ease}
+.nav__toggle span{display:block;width:18px;height:2px;margin:0;border-radius:2px;background:var(--ink);
+  transition:transform .32s var(--ease),opacity .2s ease,background .25s ease}
+.nav__toggle span:nth-child(2){width:12px;transform:translateX(3px)}
+.nav__toggle:hover{border-color:var(--accent)}
+.nav__toggle[aria-expanded="true"]{background:var(--ink);border-color:var(--ink)}
+html .nav__toggle[aria-expanded="true"] span{background:var(--bg)}
+.nav__toggle[aria-expanded="true"] span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.nav__toggle[aria-expanded="true"] span:nth-child(2){opacity:0;transform:translateX(3px) scaleX(0)}
+.nav__toggle[aria-expanded="true"] span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+.nav__backdrop{display:none}
+
+@media (min-width:801px){
+  .nav__links{gap:4px;margin-left:22px}
+  .nav__links a{padding:8px 14px;border-radius:999px;transition:background .2s ease,color .2s ease}
+  .nav__links a:hover{background:var(--accent-soft);color:var(--ink)}
+  .nav__links a.is-active{background:var(--accent-soft);color:var(--accent-dark);font-weight:700}
+  .nav__links a.is-active::after{display:none}
+  .nav__menu-foot{display:none}
+}
+
+/* Mobile: floating menu panel */
+@media (max-width:800px){
+  .nav__inner{gap:8px}
+  .theme-toggle{margin-left:auto;width:44px;height:44px;padding:0;justify-content:center;border-radius:14px}
+  .nav__toggle{display:flex;margin-left:0}
+
+  .nav__backdrop{display:block;position:fixed;inset:0;z-index:99;background:rgba(6,12,15,.5);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);
+    opacity:0;visibility:hidden;transition:opacity .25s ease,visibility 0s linear .25s}
+  body.menu-open{overflow:hidden}
+  body.menu-open .nav__backdrop{opacity:1;visibility:visible;transition:opacity .25s ease,visibility 0s}
+  body.menu-open .whatsapp-float,body.menu-open .back-to-top{opacity:0;visibility:hidden;pointer-events:none}
+
+  .nav__links{display:flex;flex-direction:column;gap:2px;position:absolute;top:calc(100% + 8px);left:12px;right:12px;margin:0;padding:8px;
+    background:var(--bg-raised);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);
+    max-height:calc(100vh - 92px);max-height:calc(100dvh - 92px);overflow-y:auto;overscroll-behavior:contain;
+    opacity:0;visibility:hidden;transform:translateY(-8px) scale(.98);transform-origin:top right;
+    transition:opacity .2s ease,transform .28s var(--ease),visibility 0s linear .28s}
+  .nav__links--open{opacity:1;visibility:visible;transform:none;transition:opacity .2s ease,transform .28s var(--ease),visibility 0s}
+
+  .nav__links > a{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px;border:0;border-radius:14px;
+    font-size:18px;font-weight:700;color:var(--ink);letter-spacing:-.01em}
+  .nav__links > a::after,.nav__links > a.is-active::after{content:'';display:block;position:static;width:8px;height:8px;height:8px;margin-right:4px;
+    background:none;border-radius:0;border-right:2px solid var(--ink-faint);border-top:2px solid var(--ink-faint);transform:rotate(45deg);flex-shrink:0}
+  .nav__links > a:active{background:var(--accent-soft)}
+  .nav__links > a.is-active{background:var(--accent-soft);color:var(--accent-dark)}
+  .nav__links > a.is-active::after{border-color:var(--accent-dark)}
+
+  /* staggered entrance (a response to the tap, not ambient motion) */
+  .nav__links > *{opacity:0;transform:translateY(6px);
+    transition:opacity .25s ease,transform .3s var(--ease),background .2s ease,color .2s ease;
+    transition-delay:0s}
+  .nav__links--open > *{opacity:1;transform:none;
+    transition-delay:calc(var(--i,0) * 45ms + 70ms),calc(var(--i,0) * 45ms + 70ms),0s,0s}
+
+  .nav__menu-foot{display:grid;gap:12px;margin-top:6px;padding:14px 8px 8px;border-top:1px solid var(--line)}
+  .nav__links .nav__menu-cta{display:flex;align-items:center;justify-content:center;gap:10px;min-height:52px;padding:0 20px;border-radius:999px;
+    background:var(--accent);color:var(--bg);font-size:16px;font-weight:800;border:0}
+  .nav__links .nav__menu-cta::after{display:none}
+  .nav__links .nav__menu-cta:active{background:var(--accent-dark)}
+  .nav__menu-contact{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .nav__links .nav__menu-contact a{display:flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:0 12px;border:1px solid var(--line-strong);
+    border-radius:999px;background:var(--bg-card);color:var(--ink);font-size:14px;font-weight:700}
+  .nav__links .nav__menu-contact a::after{display:none}
+  .nav__links .nav__menu-contact i{color:var(--accent);font-size:15px}
+  .nav__menu-note{margin:0;text-align:center;font-size:12.5px;color:var(--ink-faint)}
+}
+@media (prefers-reduced-motion:reduce){
+  .nav__links,.nav__links--open,.nav__links > *,.nav__toggle span,.nav__backdrop{transition:none!important;transition-delay:0s!important}
+  .nav__links > *{transform:none}
+}
+
+/* ---------- Interior page heroes ---------- */
+.page-hero{padding:72px 24px 80px;background:var(--bg-raised)}
+.page-hero::before{content:'';position:absolute;inset:0;pointer-events:none;
+  background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:56px 56px;opacity:.6;
+  -webkit-mask-image:radial-gradient(ellipse 65% 95% at 88% 15%,#000,transparent 72%);mask-image:radial-gradient(ellipse 65% 95% at 88% 15%,#000,transparent 72%)}
+.page-hero__inner--split{grid-template-columns:minmax(0,1.35fr) minmax(280px,.75fr);gap:56px}
+.page-hero .breadcrumb{display:flex;flex-wrap:wrap;gap:6px;font-family:var(--font-body);font-size:13px;font-weight:600;color:var(--ink-faint);margin:0 0 22px}
+.page-hero .breadcrumb a{color:var(--ink-dim)}
+.page-hero .eyebrow{display:inline-flex;align-items:center;gap:8px;margin:0 0 18px;padding:6px 14px 6px 12px;border-radius:999px;
+  border:1px solid color-mix(in srgb,var(--accent) 28%,transparent);background:var(--accent-soft);
+  font-family:var(--font-body);font-size:13px;font-weight:700;letter-spacing:0;text-transform:none;color:var(--accent-dark)}
+.page-hero .eyebrow::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--accent);flex-shrink:0}
+.page-hero h1{font-size:clamp(2.2rem,4.5vw,3.9rem);line-height:1.05;letter-spacing:-.045em;max-width:18ch;margin-bottom:20px}
+.page-hero__copy > p:not(.breadcrumb):not(.eyebrow){max-width:56ch;font-size:17px;line-height:1.7}
+.page-hero__actions{margin-top:30px}
+
+/* highlight panel */
+.page-hero__panel-card{padding:0;overflow:hidden;border-radius:20px;border:1px solid var(--line-strong);background:var(--bg-card);box-shadow:var(--shadow)}
+.page-hero__panel-card::before{content:'';display:block;height:4px;background:linear-gradient(90deg,var(--accent),var(--warm))}
+.page-hero .page-hero__panel-label{margin:0;padding:20px 22px 8px;font-family:var(--font-display);font-size:16px;font-weight:800;letter-spacing:-.015em;text-transform:none;color:var(--ink)}
+.page-hero__panel-list{gap:0;padding:4px 12px 8px}
+.page-hero__panel-item,.page-hero__panel-list a{gap:12px;padding:13px 10px;border-radius:10px;font-size:15px;font-weight:600}.page-hero__panel-list li{padding:2px 0}
+.page-hero__panel-list li + li{border-top:1px solid var(--line)}
+.page-hero__panel-list a{transition:background .18s ease,color .18s ease}
+.page-hero__panel-list a:hover{padding-left:10px;background:var(--accent-soft);color:var(--accent-dark)}
+.page-hero__panel-list a::after{content:'';width:7px;height:7px;margin:0 4px 0 auto;border-right:2px solid var(--ink-faint);border-top:2px solid var(--ink-faint);transform:rotate(45deg);flex-shrink:0;transition:transform .18s ease,border-color .18s ease}
+.page-hero__panel-list a:hover::after{border-color:var(--accent-dark);transform:translateX(3px) rotate(45deg)}
+.page-hero__panel-dot{position:relative;width:20px;height:20px;border-radius:50%;background:var(--accent-soft);flex-shrink:0}
+.page-hero__panel-dot::after{content:'';position:absolute;left:7px;top:4px;width:5px;height:9px;border:solid var(--accent-dark);border-width:0 2px 2px 0;transform:rotate(45deg)}
+.page-hero .page-hero__panel-note{margin:0;padding:14px 22px 18px;border-top:1px solid var(--line);font-size:13px;line-height:1.55;color:var(--ink-dim);background:color-mix(in srgb,var(--accent-soft) 40%,transparent)}
+
+@media (max-width:1050px){
+  .page-hero__inner--split{grid-template-columns:minmax(0,1fr);gap:32px}
+  .page-hero__panel{max-width:520px}
+}
+@media (max-width:800px){
+  html{scroll-padding-top:76px}
+  .page-hero{padding:30px 20px 44px}
+  .page-hero .breadcrumb{margin-bottom:18px}
+  .page-hero h1{font-size:clamp(2.1rem,9.4vw,2.9rem);max-width:none;margin-bottom:16px}
+  .page-hero__copy > p:not(.breadcrumb):not(.eyebrow){font-size:16px}
+  .page-hero__actions{margin-top:24px}
+}
+@media (max-width:560px){
+  .page-hero__actions{flex-direction:column;align-items:stretch;gap:10px}
+  .page-hero__actions .btn{width:100%}
+  .page-hero__actions .btn--text{border:1px solid var(--line-strong);background:var(--bg-card);color:var(--ink)}
+  .page-hero__panel{max-width:none}
+}
+
+/* ---------- Call-to-action bands: echo the orbit motif ---------- */
+.cta-band{position:relative;overflow:hidden;isolation:isolate}
+.cta-band::before,.cta-band::after{content:'';position:absolute;border-radius:50%;border:1px solid rgba(255,255,255,.14);pointer-events:none;z-index:-1}
+.cta-band::before{width:400px;height:400px;right:-130px;top:-180px}
+.cta-band::after{width:260px;height:260px;left:-90px;bottom:-140px;border-color:rgba(255,255,255,.1)}
+@media (max-width:800px){.cta-band{padding:46px 22px}}
+
+/* =====================================================================
+   v9 — site-wide layout polish (alignment, headings, grids, FAQ, timeline, light-theme depth)
+   ===================================================================== */
+
+/* ---------- One left edge: nav, hero, sections and footer all start on the same line ---------- */
+.nav__inner{max-width:calc(var(--container) + 48px)}
+.hero__grid{max-width:var(--container)}
+
+/* ---------- Section headings: let them breathe instead of wrapping into 3–4 short lines ---------- */
+.section__head h2{max-width:26ch}
+.section__intro{max-width:64ch}
+.clients__intro > *{margin-left:auto;margin-right:auto}
+
+/* ---------- Services grid: 3 + 4 instead of 6 + one orphan card ---------- */
+@media (min-width:1051px){
+  .services__grid--six{grid-template-columns:repeat(12,minmax(0,1fr))}
+  .services__grid--six .card{grid-column:span 4}
+  .services__grid--six:has(.card:nth-child(7):last-child) .card:nth-child(n+4){grid-column:span 3}
+}
+@media (min-width:561px) and (max-width:1050px){
+  .services__grid--six .card:nth-child(7):last-child{grid-column:1/-1}
+}
+
+/* ---------- Capability strip ("01–04"): a quiet pillar band instead of four giant numerals ---------- */
+.stats{padding:68px 24px}
+.stats__grid--capabilities{gap:0 28px;padding:0}
+.stats__grid--capabilities .stat{position:relative;padding:22px 0 0;border-top:2px solid rgba(255,255,255,.14)}
+.stats__grid--capabilities .stat::before{content:'';position:absolute;top:-2px;left:0;width:40px;height:2px;background:var(--warm)}
+.stats__grid--capabilities .stat__value{margin:0 0 10px;font-family:var(--font-mono);font-size:13px;font-weight:500;letter-spacing:.1em;color:var(--warm)}
+.stats__grid--capabilities .stat__label{margin:0;max-width:21ch;font-size:1.2rem;line-height:1.35;font-weight:700;color:#fff}
+@media (max-width:800px){
+  .stats{padding:56px 20px}
+  .stats__grid--capabilities{gap:30px 20px}
+  .stats__grid--capabilities .stat__label{font-size:1.05rem}
+}
+
+/* ---------- FAQ: heading on the left, questions on the right (desktop) ---------- */
+@media (min-width:1001px){
+  section:has(> .faq){display:grid;grid-template-columns:minmax(0,.78fr) minmax(0,1.22fr);column-gap:72px;align-items:start;
+    padding-left:max(24px,calc((100% - var(--container)) / 2));padding-right:max(24px,calc((100% - var(--container)) / 2))}
+  section:has(> .faq) > .section__head{grid-column:1;grid-row:1 / span 2;max-width:none;margin:0}
+  section:has(> .faq) > .faq{grid-column:2;max-width:none!important;margin:0}
+  section:has(> .faq) > .section__more{grid-column:2;max-width:none;margin:18px 0 0;text-align:left}
+}
+
+/* ---------- Timelines run across the page on desktop (About: 3 steps, Process: 4 stages) ---------- */
+@media (min-width:801px){
+  .timeline{max-width:var(--container);display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:36px}
+  .timeline::before{left:5px;right:0;top:5px;bottom:auto;width:auto;height:1px}
+  .timeline__item{padding:38px 0 0}
+  .timeline__item:last-child{padding-bottom:0}
+  .timeline__item::before{left:0;top:0;background:var(--bg-card)}
+  .timeline__item p{max-width:none}
+}
+
+/* ---------- Interior pages: alternate section backgrounds so long pages have rhythm ---------- */
+.page-hero ~ section:nth-of-type(odd){background:var(--bg-raised);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+html:not([data-theme="dark"]) .page-hero ~ section:nth-of-type(odd) :is(.card,.feature,.value,.plan,.process__item,.contact-channel,.compare,.form){background:var(--bg)}
+html:not([data-theme="dark"]) .page-hero ~ section:nth-of-type(odd) .plan--highlight{background:var(--bg-card)}
+
+/* ---------- Light theme: a little depth so white cards don't float flat on grey ---------- */
+html:not([data-theme="dark"]) :is(.card,.feature,.value,.plan,.process__item,.client-card,.brand-card,.compare,.form,.contact-channel){
+  box-shadow:0 1px 2px rgba(20,32,43,.04),0 10px 26px -14px rgba(20,32,43,.12)}
+html:not([data-theme="dark"]) .card:hover{box-shadow:0 2px 4px rgba(20,32,43,.05),0 22px 44px -16px rgba(20,32,43,.2)}
+
+/* ---------- Homepage rhythm: alternate the long grey run (clients → process → difference → FAQ) ---------- */
+.process,.faq-section{background:var(--bg-raised);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+html:not([data-theme="dark"]) .process .process__item{background:var(--bg)}
+.faq-section::before{top:10px;left:24%;transform:none;width:560px;height:300px}  /* keep the glow fully inside the section so it has no hard top edge */
+
+/* ---------- CTA band headline: it was inheriting the body's 1.7 line height, so two-line titles looked gappy ---------- */
+.cta-band h2{line-height:1.12;letter-spacing:-.03em;text-wrap:balance}
+
+/* =====================================================================
+   v10 — visual content: hero illustrations, layered stack, project cards, video reel, portfolio
+   ===================================================================== */
+
+/* ---------- Illustration palette (inline SVGs, light + dark aware) ---------- */
+.art-card{fill:var(--bg-card);stroke:var(--line-strong);stroke-width:1.5}
+.art-soft{fill:var(--accent-soft)}
+.art-solid{fill:var(--accent)}
+.art-warm{fill:var(--warm)}
+.art-mute{fill:var(--line-strong)}
+.art-line{fill:none;stroke:var(--accent);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.art-ink{fill:none;stroke:var(--ink-faint);stroke-width:1.5;stroke-linecap:round}
+.art-text{font:500 11px var(--font-mono);fill:var(--ink-dim)}
+@keyframes artBlink{0%,100%{opacity:1}50%{opacity:.25}}
+@keyframes artFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+@keyframes artPulse{0%{transform:scale(.8);opacity:.9}100%{transform:scale(1.6);opacity:0}}
+@keyframes artDash{to{stroke-dashoffset:-60}}
+@keyframes artTravel{0%{transform:translateX(0)}100%{transform:translateX(252px)}}
+@keyframes artBeat{0%{stroke-dashoffset:300}100%{stroke-dashoffset:0}}
+.art-blink{animation:artBlink 2.6s ease-in-out infinite}
+.art-float{animation:artFloat 5s ease-in-out infinite}
+.art-pulse{transform-box:fill-box;transform-origin:center;animation:artPulse 2.8s ease-out infinite}
+.art-dash{animation:artDash 3s linear infinite}
+.art-travel{animation:artTravel 3.6s ease-in-out infinite alternate}
+.art-beat{stroke-dasharray:300;animation:artBeat 3s ease-in-out infinite}
+
+/* Illustration at the top of every interior hero card */
+.hero-art{display:block;width:100%;height:auto;background:linear-gradient(180deg,var(--accent-soft),transparent 95%);border-bottom:1px solid var(--line)}
+.page-hero .page-hero__panel-card .page-hero__panel-label{padding-top:18px}
+
+/* ---------- Homepage: the layered stack (replaces the 01–04 number strip) ---------- */
+.stack{position:relative;overflow:hidden;padding:88px 24px;background:#101a1e;color:#fff}
+.stack::before{content:'';position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px);background-size:56px 56px;-webkit-mask-image:radial-gradient(ellipse 60% 80% at 75% 50%,#000,transparent 75%);mask-image:radial-gradient(ellipse 60% 80% at 75% 50%,#000,transparent 75%)}
+.stack__inner{position:relative;max-width:var(--container);margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:64px;align-items:center}
+.stack .eyebrow{color:#8fe3d8}
+.stack h2{max-width:15ch;margin:0 0 30px;font-size:clamp(2rem,3.6vw,3rem);line-height:1.06;letter-spacing:-.04em;color:#fff}
+.stack__list{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.stack__item{display:flex;align-items:center;gap:16px;padding:16px 18px;border:1px solid rgba(255,255,255,.12);border-radius:16px;background:rgba(255,255,255,.04);transition:background .2s ease,border-color .2s ease,transform .2s ease}
+.stack__item:hover{background:rgba(255,255,255,.09);border-color:var(--c);transform:translateX(4px)}
+.stack__swatch{flex:0 0 12px;width:12px;height:12px;border-radius:4px;background:var(--c)}
+.stack__num{flex:0 0 2ch;font:500 12px var(--font-mono);color:#f1b45d}
+.stack__label{font-size:1.05rem;font-weight:700;line-height:1.3;color:#fff}
+.stack__item[data-i="1"]{--c:#7ae6d8}.stack__item[data-i="2"]{--c:#48c8b9}.stack__item[data-i="3"]{--c:#34a99b}.stack__item[data-i="4"]{--c:#3aa293}
+.stack__art{display:block;width:100%;max-width:520px;height:auto;margin-inline:auto;overflow:visible}
+.slab{--c:#48c8b9;animation:artFloat 6s ease-in-out infinite;animation-delay:calc(var(--i) * -1.4s)}
+.slab--1{--c:#7ae6d8}.slab--2{--c:#48c8b9}.slab--3{--c:#34a99b}.slab--4{--c:#3aa293}
+.slab__top{fill:color-mix(in srgb,var(--c) 20%,#0f1a1f);stroke:var(--c);stroke-width:1.5;stroke-linejoin:round;transition:fill .25s ease}
+.slab__side{fill:color-mix(in srgb,var(--c) 12%,#0b1317);stroke:color-mix(in srgb,var(--c) 55%,transparent);stroke-width:1;stroke-linejoin:round}
+.slab__side--r{fill:color-mix(in srgb,var(--c) 7%,#0b1317)}
+.slab__tile{fill:color-mix(in srgb,var(--c) 38%,transparent)}
+.slab__line{fill:none;stroke:var(--c);stroke-width:1.5;opacity:.85}
+.slab__led{fill:var(--c);animation:artBlink 2.4s ease-in-out infinite}
+.slab__beat{fill:none;stroke:var(--c);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:300;animation:artBeat 3s ease-in-out infinite}
+.stack__axis{fill:none;stroke:rgba(255,255,255,.18);stroke-width:1.5;stroke-dasharray:3 7}
+.stack__packet{fill:#f1b45d;animation:stackPacket 3.8s ease-in-out infinite}
+@keyframes stackPacket{0%{transform:translateY(0);opacity:0}12%{opacity:1}88%{opacity:1}100%{transform:translateY(262px);opacity:0}}
+.stack:has(.stack__item[data-i="1"]:hover) .slab--1 .slab__top,
+.stack:has(.stack__item[data-i="2"]:hover) .slab--2 .slab__top,
+.stack:has(.stack__item[data-i="3"]:hover) .slab--3 .slab__top,
+.stack:has(.stack__item[data-i="4"]:hover) .slab--4 .slab__top{fill:color-mix(in srgb,var(--c) 52%,#0f1a1f)}
+@media (max-width:900px){
+  .stack{padding:60px 20px}
+  .stack__inner{grid-template-columns:minmax(0,1fr);gap:28px}
+  .stack__art{order:-1;max-width:360px}
+  .stack h2{max-width:none}
+}
+
+/* ---------- Project cards (homepage + portfolio) ---------- */
+.work-grid{max-width:var(--container);margin:0 auto;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}
+.work-card{display:flex;flex-direction:column;overflow:hidden;border:1px solid var(--line);border-radius:22px;background:var(--bg-card);
+  transition:transform .3s var(--ease),box-shadow .3s var(--ease),border-color .3s ease}
+.work-card:hover{transform:translateY(-4px);border-color:var(--accent);box-shadow:var(--shadow)}
+.work-card__media{position:relative;aspect-ratio:8/5;overflow:hidden;background:linear-gradient(135deg,var(--w1),var(--w2))}
+.work-art{position:absolute;inset:0;width:100%;height:100%}
+.work-card__logo{position:absolute;left:20px;bottom:20px;width:68px;height:68px;padding:8px;display:grid;place-items:center;border-radius:18px;background:#fff;box-shadow:0 12px 30px rgba(0,0,0,.3)}
+.work-card__logo img{width:100%;height:100%;object-fit:contain}
+.work-card__body{display:flex;flex-direction:column;gap:12px;flex:1;padding:26px 26px 28px}
+.work-card__chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{display:inline-flex;align-items:center;padding:5px 12px;border:1px solid color-mix(in srgb,var(--accent) 24%,transparent);border-radius:999px;background:var(--accent-soft);font-size:12px;font-weight:700;color:var(--accent-dark)}
+.chip--plain{background:transparent;border-color:var(--line-strong);color:var(--ink-dim)}
+.work-card h3{margin:0;font-size:1.5rem;letter-spacing:-.03em}
+.work-card p{margin:0;font-size:15px;line-height:1.65;color:var(--ink-dim)}
+.work-card .card__link{margin-top:auto;padding-top:6px}
+@media (max-width:800px){.work-grid{grid-template-columns:minmax(0,1fr)}.work-card__body{padding:22px 22px 24px}}
+
+/* ---------- Video reel ---------- */
+.reel{position:relative;aspect-ratio:16/10;overflow:hidden;border:1px solid var(--line-strong);border-radius:22px;background:#05080a;box-shadow:var(--shadow)}
+.reel video,.reel__poster{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.reel::after{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,transparent 55%,rgba(5,8,10,.8))}
+.reel__cap{position:absolute;left:18px;bottom:16px;z-index:2;display:flex;align-items:center;gap:8px;font-size:14px;font-weight:700;color:#fff}
+.reel__cap::before{content:'';width:8px;height:8px;border-radius:50%;background:#48c8b9;box-shadow:0 0 0 4px rgba(72,200,185,.25)}
+.reel__toggle{position:absolute;right:14px;bottom:12px;z-index:3;width:40px;height:40px;display:grid;place-items:center;border:1px solid rgba(255,255,255,.3);border-radius:50%;background:rgba(5,8,10,.55);color:#fff;cursor:pointer;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);transition:background .2s ease}
+.reel__toggle:hover{background:rgba(5,8,10,.8)}
+.reel__toggle i{display:block;width:12px;height:14px;border-left:4px solid #fff;border-right:4px solid #fff}
+.reel__toggle[aria-pressed="true"] i{width:0;height:0;border:0;border-left:12px solid #fff;border-top:8px solid transparent;border-bottom:8px solid transparent;margin-left:3px}
+
+/* ---------- "Pick a starting point" illustration tiles ---------- */
+.art-tiles{max-width:var(--container);margin:0 auto;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px}
+.art-tile{display:flex;flex-direction:column;overflow:hidden;border:1px solid var(--line);border-radius:20px;background:var(--bg-card);transition:transform .3s var(--ease),border-color .3s ease,box-shadow .3s var(--ease)}
+.art-tile:hover{transform:translateY(-4px);border-color:var(--accent);box-shadow:var(--shadow)}
+.art-tile__body{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 20px 20px}
+.art-tile h3{margin:0;font-size:1.05rem;letter-spacing:-.02em}
+.art-tile__go{flex:0 0 auto;width:34px;height:34px;display:grid;place-items:center;border-radius:50%;background:var(--accent-soft);color:var(--accent-dark);font-weight:800;transition:transform .25s var(--ease)}
+.art-tile:hover .art-tile__go{transform:translateX(4px)}
+@media (max-width:1050px){.art-tiles{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:560px){.art-tiles{grid-template-columns:minmax(0,1fr)}}
+
+@media (prefers-reduced-motion:reduce){
+  .art-blink,.art-float,.art-pulse,.art-dash,.art-travel,.art-beat,.slab,.slab__led,.slab__beat,.stack__packet{animation:none!important}
+  .stack__packet{opacity:0}
+}
+
+/* project logo tile: let wide logos (e.g. NextaStore) keep their proportions */
+.work-card__logo{width:auto;min-width:68px;height:68px;padding:8px 12px}
+.work-card__logo img{width:auto;height:100%;max-width:168px;object-fit:contain}
+.work-card__logo img{height:52px;width:auto;max-width:168px}
+
+/* six nav links: on narrow desktops/tablets drop the nav button (Contact is one click away) and tighten spacing */
+@media (min-width:801px) and (max-width:960px){
+  .nav .nav__cta{display:none}
+  .nav__links{margin-left:14px;gap:2px}
+  .nav__links a{padding:8px 11px}
+}
